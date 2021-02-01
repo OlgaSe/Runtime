@@ -80,29 +80,48 @@ class _HomePageState extends State<HomePage> {
   Widget getWeatherTable(BuildContext context) {
     var rows = [
       TableRow(key: ValueKey(0), children: <Widget>[
-        Text('Time'),
-        Text('Weather icon'),
-        Text('temperature°'),
-        Text('Main'),
+        Text('Time',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text('Weather icon',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold)
+        ),
+        Text('Temp (F)°',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        Text('Main',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold)),
       ])
     ];
 
 
     if (weatherData != null) {
-      for (var i = 0; i < weatherData['hourly'].length; i++) {
+      print(weatherData['hourly'].length);
+      for (var i = 0; i < weatherData['hourly'].length-36; i++) {
+
         // weatherData['hourly'].forEach((hourlyData) {
         var hourlyData = weatherData['hourly'][i];
         var date = DateTime.fromMillisecondsSinceEpoch(hourlyData['dt'] * 1000);
         rows.add(TableRow(key: ValueKey(hourlyData['dt']), children: <Widget>[
-          Text(date.hour.toString()),
-          Text(WeatherModel.getWeatherIcon(hourlyData['weather'][0]['id'])),
-          Text(hourlyData['temp'].toString()),
-          Text(hourlyData['weather'][0]['main']),
+          Text(date.hour.toString() + 'h',
+            textAlign: TextAlign.center,
+          ),
+          Text(WeatherModel.getWeatherIcon(hourlyData['weather'][0]['id']),
+            textAlign: TextAlign.center,
+          ),
+          Text(hourlyData['temp'].toInt().toString(),
+            textAlign: TextAlign.center,),
+          Text(hourlyData['weather'][0]['main'],
+            textAlign: TextAlign.center,),
         ]));
       }
     }
 
     return Table(
+      border: TableBorder(verticalInside: BorderSide()),
       children: rows,
     );
   }
