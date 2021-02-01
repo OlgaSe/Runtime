@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/location.dart';
 import '../services/networking.dart';
+import '../services/weather.dart';
 
 
 const apiKey = '4cc0b548d4ce485830092023fcfeea03';
@@ -37,38 +38,74 @@ class _HomePageState extends State<HomePage> {
   //   });
     double latitude;
     double longitude;
+    dynamic weatherData;
 
     @override
     void initState() {
       super.initState();
 
-    getLocationData();
+      updateLocationData();
+    }
+
+  void updateLocationData() async {
+    Location location = Location();
+    await location.getCurrentLocation();
+    latitude = location.latitude;
+    longitude = location.longitude;
+    print(latitude);
+    print(longitude);
+
+    NetworkHelper networkHelper = NetworkHelper(
+        'https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey&units=imperial');
+    //save our response from api to weatherData var which we will use in the location screen.dart in the text widget
+    //https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey&units=imperial
+
+    var weatherDataResponse = await networkHelper.getData();
+
+    var time = weatherDataResponse['hourly'][0]['dt'];
+    // var temperature = weatherData['hourly']['temp'];
+    // var main = weatherData['hourly']['weather']['main'];
+    // var icon = weatherData['hourly']['weather']['icon'];
+
+    print(time);
+    // print(temperature);
+    // print(main);
+    // print(icon);
+
+    setState(() {
+      weatherData = weatherDataResponse;
+    });
   }
 
-    void getLocationData() async {
-          Location location = Location();
-          await location.getCurrentLocation();
-          latitude = location.latitude;
-          longitude = location.longitude;
-          print(latitude);
-          print(longitude);
+  Widget getWeatherTable(BuildContext context) {
+    var rows = [
+      TableRow(key: ValueKey(0), children: <Widget>[
+        Text('Time'),
+        Text('Weather icon'),
+        Text('temperature°'),
+        Text('Main'),
+      ])
+    ];
 
-          NetworkHelper networkHelper = NetworkHelper('https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey&units=imperial');
-      //save our response from api to weatherData var which we will use in the location screen.dart in the text widget
-      //https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey&units=imperial
 
-      var weatherData = await networkHelper.getData();
-
-      // var time = weatherData['hourly']['dt'];
-      // var temperature = weatherData['hourly']['temp'];
-      // var main = weatherData['hourly']['weather']['main'];
-      // var icon = weatherData['hourly']['weather']['icon'];
-      //
-      // print(time);
-      // print(temperature);
-      // print(main);
-      // print(icon);
+    if (weatherData != null) {
+      for (var i = 0; i < weatherData['hourly'].length; i++) {
+        // weatherData['hourly'].forEach((hourlyData) {
+        var hourlyData = weatherData['hourly'][i];
+        var date = DateTime.fromMillisecondsSinceEpoch(hourlyData['dt'] * 1000);
+        rows.add(TableRow(key: ValueKey(hourlyData['dt']), children: <Widget>[
+          Text(date.hour.toString()),
+          Text(WeatherModel.getWeatherIcon(hourlyData['weather'][0]['id'])),
+          Text(hourlyData['temp'].toString()),
+          Text(hourlyData['weather'][0]['main']),
+        ]));
+      }
     }
+
+    return Table(
+      children: rows,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,38 +128,39 @@ class _HomePageState extends State<HomePage> {
           // mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset('images/background.png',),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'Time',
-                    ),
-                    Text(
-                      'Weather icon',
-                    ),
-                    Text(
-                      'Temperature',
-                      // style: kTempTextStyle,
-                    ),
-                    Text(
-                      'Main',
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text('Time'),
-                    Text('Weather icon'),
-                    Text('temperature°'),
-                    Text('Main'),
-                  ],
-                ),
-          ],
-        ),
+            getWeatherTable(context)
+        //     Column(
+        //       mainAxisAlignment: MainAxisAlignment.start,
+        //       children: <Widget>[
+        //         Row(
+        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //           children: <Widget>[
+        //             Text(
+        //               'Time',
+        //             ),
+        //             Text(
+        //               'Weather icon',
+        //             ),
+        //             Text(
+        //               'Temperature',
+        //               // style: kTempTextStyle,
+        //             ),
+        //             Text(
+        //               'Main',
+        //             ),
+        //           ],
+        //         ),
+        //         Row(
+        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //           children: <Widget>[
+        //             Text('Time'),
+        //             Text('Weather icon'),
+        //             Text('temperature°'),
+        //             Text('Main'),
+        //           ],
+        //         ),
+        //   ],
+        // ),
       ]),
     ),
     );
