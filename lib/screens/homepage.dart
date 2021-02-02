@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/location.dart';
 import '../services/networking.dart';
 import '../services/weather.dart';
+import '../screens/settings.dart';
 
 
 const apiKey = '4cc0b548d4ce485830092023fcfeea03';
@@ -126,6 +127,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -139,6 +141,19 @@ class _HomePageState extends State<HomePage> {
         // Here we take the value from the HomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+          onSelected: handleClick,
+          itemBuilder: (BuildContext context) {
+              return {'Settings', 'Logout'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       body: Container(
         // Center is a layout widget. It takes a single child and positions it
@@ -184,4 +199,11 @@ class _HomePageState extends State<HomePage> {
     ),
     );
   }
+    void handleClick(String choice) {
+      if(choice == 'Settings') {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return SettingsScreen();
+        }));
+      }
+    }
 }
