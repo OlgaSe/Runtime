@@ -162,39 +162,7 @@ class _HomePageState extends State<HomePage> {
           // mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset('images/background.png',),
-            getWeatherTable(context)
-        //     Column(
-        //       mainAxisAlignment: MainAxisAlignment.start,
-        //       children: <Widget>[
-        //         Row(
-        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //           children: <Widget>[
-        //             Text(
-        //               'Time',
-        //             ),
-        //             Text(
-        //               'Weather icon',
-        //             ),
-        //             Text(
-        //               'Temperature',
-        //               // style: kTempTextStyle,
-        //             ),
-        //             Text(
-        //               'Main',
-        //             ),
-        //           ],
-        //         ),
-        //         Row(
-        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //           children: <Widget>[
-        //             Text('Time'),
-        //             Text('Weather icon'),
-        //             Text('temperature°'),
-        //             Text('Main'),
-        //           ],
-        //         ),
-        //   ],
-        // ),
+            getWeatherTable(context),
       ]),
     ),
     );
