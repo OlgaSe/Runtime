@@ -9,10 +9,10 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String selectedDuration = '15 min';
-  String selectedRangeStart = '0:00';
-  String selectedRangeEnd = '3:00';
-  String selectedBlockRangeStart = '1:00';
-  String selectedBlockRangeEnd = '2:00';
+  String selectedRangeStart = '6:00';
+  String selectedRangeEnd = '6:30';
+  String selectedBlockRangeStart = '7:00';
+  String selectedBlockRangeEnd = '7:30';
   String selectedNotification = '15 min';
 
   Preference _preferences = Preference();
@@ -48,6 +48,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("Building with preferences: $_preferences");
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
@@ -62,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Text('Duration of run'),
                 DropdownButton<int>(
                     value: _preferences.selectedDuration,
-                    items: <int>[15, 30, 45, 60]
+                    items: <int>[15, 30, 45, 60, 90]
                         .map((int value) {
                       return new DropdownMenuItem<int>(
                         value: value,
@@ -81,19 +83,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: <Widget>[
                     Text('Time range'),
                     DropdownButton<String>(
-                        value: selectedRangeStart,
+                        value: _preferences.selectedRangeStart,
                         items: getDropDownItems(),
                         onChanged: (value) {
                           setState(() {
-                            selectedRangeStart = value;
+                            _preferences.selectedRangeStart = value;
                           });
                         }),
                     DropdownButton<String>(
-                        value: selectedRangeEnd,
+                        value: _preferences.selectedRangeEnd,
                         items: getDropDownItems(),
                         onChanged: (value) {
                           setState(() {
-                            selectedRangeEnd = value;
+                            _preferences.selectedRangeEnd = value;
                           });
                         }),
               ],
@@ -103,19 +105,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: <Widget>[
                     Text('Block time'),
                     DropdownButton<String>(
-                        value: selectedBlockRangeStart,
+                        value: _preferences.selectedBlockRangeStart,
                         items: getDropDownItems(),
                         onChanged: (value) {
                           setState(() {
-                            selectedBlockRangeStart = value;
+                            _preferences.selectedBlockRangeStart = value;
                           });
                         }),
                     DropdownButton<String>(
-                        value: selectedBlockRangeEnd,
+                        value: _preferences.selectedBlockRangeEnd,
                         items: getDropDownItems(),
                         onChanged: (value) {
                           setState(() {
-                            selectedBlockRangeEnd = value;
+                            _preferences.selectedBlockRangeEnd = value;
                           });
                         }),
                   ],
@@ -124,23 +126,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Text('Notification'),
-                    DropdownButton<String>(
-                        value: selectedNotification,
-                        items: <String>['15 min', '30 min', '45 min', '60 min']
-                            .map((String value) {
-                          return new DropdownMenuItem<String>(
+                    DropdownButton<int>(
+                        value: _preferences.selectedNotification,
+                        items: <int>[15, 30, 45, 60, 90]
+                            .map((int value) {
+                          return new DropdownMenuItem<int>(
                             value: value,
-                            child: Text(value),
+                            child: Text("$value min"),
                           );
                         }).toList(),
                         onChanged: (value) {
                           setState(() {
-                            selectedNotification = value;
+                            _preferences.selectedNotification = value;
                           });
                         }),
                   ],
                 ),
-                ElevatedButton(onPressed: () => _preferences.savePreference(), child: Text('Save')),
+                ElevatedButton(
+                    onPressed: () {_preferences.savePreference(); Navigator.pop(context);},
+                    child: Text('Save')),
       ])),
     );
   }
