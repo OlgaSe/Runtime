@@ -10,6 +10,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String selectedDuration = '15 min';
   String selectedRangeStart = '0:00';
   String selectedRangeEnd = '3:00';
+  String selectedBlockRangeStart = '1:00';
+  String selectedBlockRangeEnd = '2:00';
+  String selectedNotification = '15 min';
+
 
   List<DropdownMenuItem> getDropDownItems() {
     List<DropdownMenuItem<String>> dropdownItems = [];
@@ -32,6 +36,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: Container(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -54,7 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Text('Time range'),
                     DropdownButton<String>(
@@ -75,6 +80,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         }),
               ],
             ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Text('Block time'),
+                    DropdownButton<String>(
+                        value: selectedBlockRangeStart,
+                        items: getDropDownItems(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedBlockRangeStart = value;
+                          });
+                        }),
+                    DropdownButton<String>(
+                        value: selectedBlockRangeEnd,
+                        items: getDropDownItems(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedBlockRangeEnd = value;
+                          });
+                        }),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Text('Notification'),
+                    DropdownButton<String>(
+                        value: selectedNotification,
+                        items: <String>['15 min', '30 min', '45 min', '60 min']
+                            .map((String value) {
+                          return new DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedNotification = value;
+                          });
+                        }),
+                  ],
+                ),
+                ElevatedButton(onPressed: () {}, child: Text('Save')),
       ])),
     );
   }
