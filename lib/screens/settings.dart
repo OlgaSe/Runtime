@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:runtime/services/preference.dart';
 import 'package:runtime/services/time_data.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -13,6 +14,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String selectedBlockRangeStart = '1:00';
   String selectedBlockRangeEnd = '2:00';
   String selectedNotification = '15 min';
+
+  Preference _preferences = Preference();
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    loadPreferences();
+  }
+
+  Future loadPreferences() async {
+    var loadedPreferences = await Preference.loadPreference();
+    setState(() {
+      _preferences = loadedPreferences;
+    });
+  }
 
 
   List<DropdownMenuItem> getDropDownItems() {
@@ -42,18 +60,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Text('Duration of run'),
-                DropdownButton<String>(
-                    value: selectedDuration,
-                    items: <String>['15 min', '30 min', '45 min', '60 min']
-                        .map((String value) {
-                      return new DropdownMenuItem<String>(
+                DropdownButton<int>(
+                    value: _preferences.selectedDuration,
+                    items: <int>[15, 30, 45, 60]
+                        .map((int value) {
+                      return new DropdownMenuItem<int>(
                         value: value,
-                        child: new Text(value),
+                        child: new Text("$value min"),
                       );
                     }).toList(),
                     onChanged: (value) {
                       setState(() {
-                        selectedDuration = value;
+                        _preferences.selectedDuration = value;
                       });
                     }),
               ],
@@ -122,7 +140,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         }),
                   ],
                 ),
-                ElevatedButton(onPressed: () {}, child: Text('Save')),
+                ElevatedButton(onPressed: () => _preferences.savePreference(), child: Text('Save')),
       ])),
     );
   }
