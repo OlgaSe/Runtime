@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:runtime/services/notification_utils.dart';
 import '../services/location.dart';
 import '../services/networking.dart';
 import '../services/weather.dart';
 import '../screens/settings.dart';
+import '../services/notification.dart';
+
 
 
 const apiKey = '4cc0b548d4ce485830092023fcfeea03';
@@ -40,12 +43,14 @@ class _HomePageState extends State<HomePage> {
     double latitude;
     double longitude;
     dynamic weatherData;
+    NotificationUtils notificationUtils = NotificationUtils();
 
     @override
     void initState() {
       super.initState();
 
       updateLocationData();
+      notificationUtils.initialize();
     }
 
   void updateLocationData() async {
@@ -162,6 +167,14 @@ class _HomePageState extends State<HomePage> {
           // mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset('images/background.png',),
+            // LocalNotifications(),
+            FlatButton(
+                color: Colors.blue,
+                onPressed: () => notificationUtils.showNotifications(),
+                child: Text(
+                  "Show notification",
+                  style: TextStyle(fontSize: 20.0, color: Colors.white),
+                )),
             getWeatherTable(context),
       ]),
     ),
@@ -174,4 +187,5 @@ class _HomePageState extends State<HomePage> {
         }));
       }
     }
+
 }
