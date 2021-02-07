@@ -5,7 +5,18 @@ import 'package:workmanager/workmanager.dart';
 
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Workmanager.initialize(callbackDispatcher, isInDebugMode: true);
+  Workmanager.registerPeriodicTask('periodic', 'periodicTask', frequency: Duration(minutes: 15),);
+
   runApp(MyApp());
+}
+
+void callbackDispatcher() {
+  Workmanager.executeTask((task, inputData) {
+    print('5min periodic task is called here'); //simpleTask will be emitted here.
+    return Future.value(true);
+  });
 }
 
 class MyApp extends StatelessWidget {
