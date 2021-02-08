@@ -2,19 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:runtime/screens/homepage.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart';
+import 'package:runtime/services/notification_utils.dart';
 
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  var currentTime = DateTime.now();
+  print("Starting app at $currentTime");
   Workmanager.initialize(callbackDispatcher, isInDebugMode: true);
-  Workmanager.registerPeriodicTask('periodic', 'periodicTask', frequency: Duration(minutes: 15),);
+  Workmanager.registerPeriodicTask('periodic', 'periodicTask',
+    frequency: Duration(minutes: 15),
+    existingWorkPolicy: ExistingWorkPolicy.replace,
+  );
 
   runApp(MyApp());
 }
 
 void callbackDispatcher() {
   Workmanager.executeTask((task, inputData) {
-    print('5min periodic task is called here'); //simpleTask will be emitted here.
+    print("Got callback");
+    var notificationUtils = NotificationUtils();
+    print("Calling initialize");
+    notificationUtils.initialize();
+
+    print('15min periodic task is called here'); //simpleTask will be emitted here.
+    notificationUtils.showNotifications();
     return Future.value(true);
   });
 }
