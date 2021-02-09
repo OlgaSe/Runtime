@@ -1,16 +1,18 @@
 import 'package:runtime/services/preference.dart';
+import 'package:workmanager/workmanager.dart';
+
+import 'app_prefs.dart';
 
 
 void hourlyWork() async {
 //load preferences
-  var preferences = await Preference.loadPreference();
-  var now = DateTime.now();
+  var userPreferences = await Preference.loadPreference();
+  var appPreferences = await AppPreferences.loadPreferences();
   var nextTime = nextHour(2);
 
-  if (! (isInTimeRange(preferences)
-      && isNotInBlockRange(preferences)
-      && noRunYet(preferences))
-      && noNotificationScheduled()
+  if (! (isInTimeRange(userPreferences)
+      && isNotInBlockRange(userPreferences)
+      && noRunYet(userPreferences))
   ) {
     return;
   }
@@ -22,22 +24,14 @@ void hourlyWork() async {
 
 
   // сalculate when to send notification(depend on user selectNotification choice in prefs)
-
-  var notificationPref = preferences.selectedNotification;
+  var notificationPref = userPreferences.selectedNotification;
   var notificationTime = nextTime.subtract(new Duration(minutes: notificationPref));
 
 
   // create a message
-  getMessage(int id);
+  var message = getMessage(int id);
 
-  // schedule the time to show notification
-  Workmanager.registerOneOffTask("Notification",
-      "NotificationTask",
-      initialDelay: notificationTime.difference(now),
-      inputData: {'message': "Run!"}
-  );
-  // save notification time into preferences
-
+  scheduleNotification(message, notificationTime, appPreferences);
 }
 
 DateTime nextHour(int hours) {
@@ -49,14 +43,9 @@ DateTime nextHour(int hours) {
 
 
 //check if next hour is in the time range from prefs
-bool isInTimeRange(preferences){
-  var now = DateTime.now();
-  var nextHour = DateTime(now.hour + 1); //or milliseconds?
-  print(nextHour);
-
-  var preferences = Preference();
-  var rangeStart = preferences.getString('selectedRangeStart');//change tbe method type in the preference.dart
-  var rangeEnd = preferences.getString('selectedRangeEnd');
+bool isInTimeRange(Preference preferences, DateTime nextHour){
+  var rangeStart = preferences.selectedRangeStart;//change tbe method type in the preference.dart
+  var rangeEnd = preferences.selectedRangeEnd;
   print(rangeStart);
   print(rangeEnd);
 
@@ -89,6 +78,21 @@ String getMessage(int id) {
   } else {
     return 'Bring a 🧥 just in case';
   }
+}
+
+scheduleNotification(String message, DateTime notificationTime, AppPreferences appPreferences) {
+  var now = DateTime.now();
+
+  // schedule the time to show notification
+  Workmanager.registerOneOffTask("Notification_"+notificationTime.toString(),
+      "NotificationTask",
+      initialDelay: notificationTime.difference(now),
+      inputData: {'message': message},
+      tag: "scheduledNotification" //for cancelling notification
+  );
+
+  // save notification time into preferences
+  appPreferences.setNotificationScheduledTime(notificationTime);
 }
 
 //check the weather for the next hour
