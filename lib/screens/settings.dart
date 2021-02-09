@@ -128,7 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Text('Notification'),
                     DropdownButton<int>(
                         value: _preferences.selectedNotification,
-                        items: <int>[15, 30, 45, 60, 90]
+                        items: <int>[15, 30, 45, 60]
                             .map((int value) {
                           return new DropdownMenuItem<int>(
                             value: value,
