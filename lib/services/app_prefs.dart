@@ -6,7 +6,7 @@ class AppPreferences {
 
   AppPreferences(this._sharedPreferences);
 
-  static loadPreferences() async {
+  static Future<AppPreferences> loadPreferences() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     return AppPreferences(sharedPreferences);
   }

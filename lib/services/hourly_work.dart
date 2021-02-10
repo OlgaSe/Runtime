@@ -1,38 +1,74 @@
 import 'package:runtime/services/preference.dart';
 import 'package:workmanager/workmanager.dart';
-
+import 'package:runtime/services/weather.dart';
 import 'app_prefs.dart';
 
 
-void hourlyWork() async {
+hourlyWork() async {
 //load preferences
   var userPreferences = await Preference.loadPreference();
   var appPreferences = await AppPreferences.loadPreferences();
   var nextTime = nextHour(2);
 
-  if (! (isInTimeRange(userPreferences)
-      && isNotInBlockRange(userPreferences)
-      && noRunYet(userPreferences))
-  ) {
+  print("Starting checks for $nextTime");
+
+  if (!isInTimeRange(userPreferences, nextTime)) {
+    print("Not in the user time range");
     return;
   }
 
-  var weatherInfo = await Weather.getInfo();
-  if (! goodWeather(weatherInfo, nextTime)) {
+  if (isInBlockRange(userPreferences, nextTime)) {
+    print("Is in the blocked range");
+    return;
+  }
+
+  if (hadRun(appPreferences, nextTime)) {
+    print("User already had a run today");
+    return;
+  }
+
+  print("Getting weather information");
+  var weather = await Weather.getWeather();
+  print("Got weather");
+  var nextHourWeather = weather.getHourWeather(nextTime);
+  if (nextHourWeather == null) {
+    var hourInSeconds = nextTime.millisecondsSinceEpoch / 1000;
+    print("Could not find weather for $hourInSeconds");
+    print(weather.getRawWeatherData());
+  }
+
+  if (!Weather.isGoodWeather(nextHourWeather)) {
+    print("Not good weather");
     return;
   }
 
 
   // сalculate when to send notification(depend on user selectNotification choice in prefs)
-  var notificationPref = userPreferences.selectedNotification;
+  var notificationPref = userPreferences.notificationMin;
   var notificationTime = nextTime.subtract(new Duration(minutes: notificationPref));
 
 
-  // create a message
-  var message = getMessage(int id);
-
+  // create and schedule a message
+  var message = getMessage(nextHourWeather['weather'][0]['id']);
   scheduleNotification(message, notificationTime, appPreferences);
 }
+
+bool hadRun(AppPreferences appPreferences, DateTime nextTime) {
+  var lastRunTime = appPreferences.getLastRunTime();
+  return lastRunTime?.day == nextTime.day;
+}
+
+bool isInBlockRange(Preference userPreferences, DateTime nextTime) {
+  var nextHourInMinutes = nextTime.hour*60 + nextTime.minute;
+
+  if (nextHourInMinutes >= userPreferences.blockRangeStartMin
+      && nextHourInMinutes <= userPreferences.blockRangeEndMin) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 
 DateTime nextHour(int hours) {
   var now = DateTime.now(); //2021-02-07 16:49:33.340021
@@ -44,14 +80,11 @@ DateTime nextHour(int hours) {
 
 //check if next hour is in the time range from prefs
 bool isInTimeRange(Preference preferences, DateTime nextHour){
-  var rangeStart = preferences.selectedRangeStart;//change tbe method type in the preference.dart
-  var rangeEnd = preferences.selectedRangeEnd;
-  print(rangeStart);
-  print(rangeEnd);
+  var rangeStart = preferences.rangeStartMin; //change tbe method type in the preference.dart
+  var rangeEnd = preferences.rangeEndMin;
+  var nextHourInMinutes = nextHour.hour*60 + nextHour.minute;
 
-  if (nextHour.millisecondsSinceEpoch >= DateTime.parse(rangeStart).millisecondsSinceEpoch &&
-      nextHour.millisecondsSinceEpoch <= DateTime.parse(rangeEnd).millisecondsSinceEpoch) {
-    print('Next hour is in the range, let proceed with other checks');
+  if (nextHourInMinutes >= rangeStart && nextHourInMinutes <= rangeEnd) {
     return true;
   } else {
     return false;
@@ -82,6 +115,8 @@ String getMessage(int id) {
 
 scheduleNotification(String message, DateTime notificationTime, AppPreferences appPreferences) {
   var now = DateTime.now();
+  // notificationTime = now.add(Duration(minutes: 1));
+  print("Will show '$message' at $notificationTime");
 
   // schedule the time to show notification
   Workmanager.registerOneOffTask("Notification_"+notificationTime.toString(),
@@ -94,6 +129,7 @@ scheduleNotification(String message, DateTime notificationTime, AppPreferences a
   // save notification time into preferences
   appPreferences.setNotificationScheduledTime(notificationTime);
 }
+
 
 //check the weather for the next hour
 

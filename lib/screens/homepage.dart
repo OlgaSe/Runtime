@@ -54,32 +54,34 @@ class _HomePageState extends State<HomePage> {
     }
 
   void updateLocationData() async {
-    Location location = Location();
-    await location.getCurrentLocation();
-    latitude = location.latitude;
-    longitude = location.longitude;
-    print(latitude);
-    print(longitude);
+    // Location location = Location();
+    // await location.getCurrentLocation();
+    // latitude = location.latitude;
+    // longitude = location.longitude;
+    // print(latitude);
+    // print(longitude);
+    //
+    // NetworkHelper networkHelper = NetworkHelper(
+    //     'https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey&units=imperial');
+    // //save our response from api to weatherData var which we will use in the location screen.dart in the text widget
+    // //https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey&units=imperial
+    //
+    // var weatherDataResponse = await networkHelper.getData();
+    //
+    // var time = weatherDataResponse['hourly'][0]['dt'];
+    // // var temperature = weatherData['hourly']['temp'];
+    // // var main = weatherData['hourly']['weather']['main'];
+    // // var icon = weatherData['hourly']['weather']['icon'];
+    //
+    // print(time);
+    // // print(temperature);
+    // // print(main);
+    // // print(icon);
 
-    NetworkHelper networkHelper = NetworkHelper(
-        'https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey&units=imperial');
-    //save our response from api to weatherData var which we will use in the location screen.dart in the text widget
-    //https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey&units=imperial
-
-    var weatherDataResponse = await networkHelper.getData();
-
-    var time = weatherDataResponse['hourly'][0]['dt'];
-    // var temperature = weatherData['hourly']['temp'];
-    // var main = weatherData['hourly']['weather']['main'];
-    // var icon = weatherData['hourly']['weather']['icon'];
-
-    print(time);
-    // print(temperature);
-    // print(main);
-    // print(icon);
-
+    var weather = await Weather.getWeather();
     setState(() {
-      weatherData = weatherDataResponse;
+      weatherData = weather.getRawWeatherData();
+      //weatherData = weatherDataResponse;
     });
   }
 
@@ -105,14 +107,13 @@ class _HomePageState extends State<HomePage> {
 
 
     if (weatherData != null) {
-      print(weatherData['hourly'].length);
       for (var i = 0; i < weatherData['hourly'].length-36; i++) {
 
         // weatherData['hourly'].forEach((hourlyData) {
         var hourlyData = weatherData['hourly'][i];
         var date = DateTime.fromMillisecondsSinceEpoch(hourlyData['dt'] * 1000);
         rows.add(TableRow(key: ValueKey(hourlyData['dt']), children: <Widget>[
-          Text(date.hour.toString() + 'h',
+          Text(date.hour.toString() + ':00',
             textAlign: TextAlign.center,
           ),
           Text(WeatherModel.getWeatherIcon(hourlyData['weather'][0]['id']),
@@ -170,7 +171,7 @@ class _HomePageState extends State<HomePage> {
             // LocalNotifications(),
             FlatButton(
                 color: Colors.blue,
-                onPressed: () => notificationUtils.showNotifications(),
+                onPressed: () => notificationUtils.showNotifications("Test notification"),
                 child: Text(
                   "Show notification",
                   style: TextStyle(fontSize: 20.0, color: Colors.white),
@@ -187,5 +188,4 @@ class _HomePageState extends State<HomePage> {
         }));
       }
     }
-
 }

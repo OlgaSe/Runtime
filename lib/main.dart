@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:runtime/screens/homepage.dart';
+import 'package:runtime/services/hourly_work.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:runtime/services/notification_utils.dart';
@@ -19,14 +20,28 @@ void main() {
 }
 
 void callbackDispatcher() {
-  Workmanager.executeTask((task, inputData) {
+  Workmanager.executeTask((task, inputData) async {
     print("Got callback");
-    var notificationUtils = NotificationUtils();
-    print("Calling initialize");
-    notificationUtils.initialize();
 
-    print('15min periodic task is called here'); //simpleTask will be emitted here.
-    notificationUtils.showNotifications();
+    if (task == 'periodicTask') {
+      print("Got periodicTask");
+      try {
+        await hourlyWork();
+      } catch (e) {
+        print(e);
+      }
+    } else if (task == 'NotificationTask' ) {
+      print("Got NotificationTask");
+      var notificationUtils = NotificationUtils();
+      print("Calling initialize");
+      notificationUtils.initialize();
+
+      print("Showing notification");
+      notificationUtils.showNotifications(inputData["message"]);
+    } else {
+      print("Unknown task! $task");
+    }
+
     return Future.value(true);
   });
 }

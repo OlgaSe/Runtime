@@ -22,12 +22,12 @@ class NotificationUtils {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
   }
 
-  void showNotifications() async {
-    await notification();
+  void showNotifications(String message) async {
+    await notification(message);
   }
 
 
-  Future<void> notification() async{
+  Future<void> notification(String message) async{
     AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
         'Channel_ID',
         'Channel title',
@@ -40,7 +40,7 @@ class NotificationUtils {
 
     NotificationDetails notificationDetails =
     NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(0, 'Time to run', 'The optimal time to run at 1:00', notificationDetails);
+    await flutterLocalNotificationsPlugin.show(0, 'Time to run', message, notificationDetails);
   }
 
 

@@ -17,7 +17,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Preference _preferences = Preference();
 
-
   @override
   void initState() {
     super.initState();
@@ -34,16 +33,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 
   List<DropdownMenuItem> getDropDownItems() {
-    List<DropdownMenuItem<String>> dropdownItems = [];
+    List<DropdownMenuItem<int>> dropdownItems = [];
 
-    for (String time in timeList) {
+    for (int time in timeList) {
       var newItem = DropdownMenuItem(
-        child: Text(time),
+        child: Text(formatMinutes(time)),
         value: time,
       );
       dropdownItems.add(newItem);
     }
     return dropdownItems;
+  }
+
+  String formatMinutes(int minutes) {
+    var hours = minutes ~/ 60;
+    var hoursString = hours > 9 ? hours.toString() : "0$hours" ;
+    var mins = minutes % 60;
+    var minsString = mins > 9 ? mins.toString() : "0$mins" ;
+
+    return "$hoursString:$minsString";
   }
 
   @override
@@ -63,7 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: <Widget>[
                 Text('Duration of run'),
                 DropdownButton<int>(
-                    value: _preferences.selectedDuration,
+                    value: _preferences.durationMin,
                     items: <int>[15, 30, 45, 60, 90]
                         .map((int value) {
                       return new DropdownMenuItem<int>(
@@ -73,7 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     }).toList(),
                     onChanged: (value) {
                       setState(() {
-                        _preferences.selectedDuration = value;
+                        _preferences.durationMin = value;
                       });
                     }),
               ],
@@ -82,20 +90,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Text('Time range'),
-                    DropdownButton<String>(
-                        value: _preferences.selectedRangeStart,
+                    DropdownButton<int>(
+                        value: _preferences.rangeStartMin,
                         items: getDropDownItems(),
                         onChanged: (value) {
                           setState(() {
-                            _preferences.selectedRangeStart = value;
+                            _preferences.rangeStartMin = value;
                           });
                         }),
-                    DropdownButton<String>(
-                        value: _preferences.selectedRangeEnd,
+                    DropdownButton<int>(
+                        value: _preferences.rangeEndMin,
                         items: getDropDownItems(),
                         onChanged: (value) {
                           setState(() {
-                            _preferences.selectedRangeEnd = value;
+                            _preferences.rangeEndMin = value;
                           });
                         }),
               ],
@@ -104,20 +112,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Text('Block time'),
-                    DropdownButton<String>(
-                        value: _preferences.selectedBlockRangeStart,
+                    DropdownButton<int>(
+                        value: _preferences.blockRangeStartMin,
                         items: getDropDownItems(),
                         onChanged: (value) {
                           setState(() {
-                            _preferences.selectedBlockRangeStart = value;
+                            _preferences.blockRangeStartMin = value;
                           });
                         }),
-                    DropdownButton<String>(
-                        value: _preferences.selectedBlockRangeEnd,
+                    DropdownButton<int>(
+                        value: _preferences.blockRangeEndMin,
                         items: getDropDownItems(),
                         onChanged: (value) {
                           setState(() {
-                            _preferences.selectedBlockRangeEnd = value;
+                            _preferences.blockRangeEndMin = value;
                           });
                         }),
                   ],
@@ -127,7 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: <Widget>[
                     Text('Notification'),
                     DropdownButton<int>(
-                        value: _preferences.selectedNotification,
+                        value: _preferences.notificationMin,
                         items: <int>[15, 30, 45, 60]
                             .map((int value) {
                           return new DropdownMenuItem<int>(
@@ -137,7 +145,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         }).toList(),
                         onChanged: (value) {
                           setState(() {
-                            _preferences.selectedNotification = value;
+                            _preferences.notificationMin = value;
                           });
                         }),
                   ],

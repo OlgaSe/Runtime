@@ -1,49 +1,44 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Preference {
+  int durationMin = 15;
+  int rangeStartMin = 6 * 60;
+  int rangeEndMin = 6 * 60 + 30;
+  int blockRangeStartMin = 7 * 60;
+  int blockRangeEndMin = 7 * 60 + 30;
+  int notificationMin = 15;
 
-  int selectedDuration = 15;
-  String selectedRangeStart = '6:00';
-  String selectedRangeEnd = '6:30';
-  String selectedBlockRangeStart = '7:00';
-  String selectedBlockRangeEnd = '7:30';
-  int selectedNotification = 15;
 
-
-  Preference({this.selectedDuration, this.selectedRangeStart,
-      this.selectedRangeEnd, this.selectedBlockRangeStart,
-      this.selectedBlockRangeEnd, this.selectedNotification});
+  Preference({this.durationMin, this.rangeStartMin,
+      this.rangeEndMin, this.blockRangeStartMin,
+      this.blockRangeEndMin, this.notificationMin});
 
   savePreference() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setInt('selectedDuration', selectedDuration);
-    prefs.setString('selectedRangeStart', selectedRangeStart);
-    prefs.setString('selectedRangeEnd', selectedRangeEnd);
-    prefs.setString('selectedBlockRangeStart', selectedBlockRangeStart);
-    prefs.setString('selectedBlockRangeEnd', selectedBlockRangeEnd);
-    prefs.setInt('selectedNotification', selectedNotification);
+    prefs.setInt('durationMin', durationMin);
+    prefs.setInt('rangeStartMin', rangeStartMin);
+    prefs.setInt('rangeEndMin', rangeEndMin);
+    prefs.setInt('blockRangeStartMin', blockRangeStartMin);
+    prefs.setInt('blockRangeEndMin', blockRangeEndMin);
+    prefs.setInt('notificationMin', notificationMin);
   }
 
-  static loadPreference() async {
+  static Future<Preference> loadPreference() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     return Preference(
-      selectedDuration: prefs.getInt('selectedDuration') ?? 15,
-      selectedRangeStart: _getString(prefs, 'selectedRangeStart', '6:00'),
-      selectedRangeEnd: _getString(prefs, 'selectedRangeEnd', '6:30'),
-      selectedBlockRangeStart: _getString(prefs, 'selectedBlockRangeStart', '7:00'),
-      selectedBlockRangeEnd: _getString(prefs, 'selectedBlockRangeEnd', '7:30'),
-      selectedNotification: prefs.getInt('selectedNotification') ?? 15,
+      durationMin: prefs.getInt('durationMin') ?? 15,
+      rangeStartMin: prefs.getInt('rangeStartMin') ?? 6*60,
+      rangeEndMin: prefs.getInt('rangeEndMin') ?? 6*60 + 30,
+      blockRangeStartMin: prefs.getInt('blockRangeStartMin') ?? 7*60,
+      blockRangeEndMin: prefs.getInt('blockRangeEndMin') ?? 7*60 + 30,
+      notificationMin: prefs.getInt('notificationMin') ?? 15,
     );
   }
 
-  static String _getString(SharedPreferences prefs, String key, String def) {
-    var val = prefs.getString(key);
-    return val != null && val != '' ? val : def;
-  }
 
   @override
   String toString() {
-    return 'Preference{selectedDuration: $selectedDuration, selectedRangeStart: $selectedRangeStart, selectedRangeEnd: $selectedRangeEnd, selectedBlockRangeStart: $selectedBlockRangeStart, selectedBlockRangeEnd: $selectedBlockRangeEnd, selectedNotification: $selectedNotification}';
+    return 'Preference{selectedDuration: $durationMin, selectedRangeStart: $rangeStartMin, selectedRangeEnd: $rangeEndMin, selectedBlockRangeStart: $blockRangeStartMin, selectedBlockRangeEnd: $blockRangeEndMin, selectedNotification: $notificationMin}';
   }
 }

@@ -1,15 +1,11 @@
-const List<String> timeList = [
-  '6:00',
-  '6:15',
-  '6:30',
-  '6:45',
-  '7:00',
-  '7:15',
-  '7:30',
-  '7:45',
-  '8:00',
-  '8:15',
-  '8:30',
-  '8:45',
-  '9:00',
-];
+final List<int> timeList = generateMinutesList();
+
+List<int> generateMinutesList() {
+  List<int> res = [];
+  for (int i=6 * 60; i<= 21* 60; i+=15) {
+    res.add(i);
+  }
+
+  return res;
+}
+
