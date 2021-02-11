@@ -2,9 +2,10 @@ import 'package:runtime/services/preference.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:runtime/services/weather.dart';
 import 'app_prefs.dart';
+import 'package:intl/intl.dart';
 
 
-hourlyWork() async {
+hourlyWork({debug=false}) async {
 //load preferences
   var userPreferences = await Preference.loadPreference();
   var appPreferences = await AppPreferences.loadPreferences();
@@ -46,11 +47,17 @@ hourlyWork() async {
   // сalculate when to send notification(depend on user selectNotification choice in prefs)
   var notificationPref = userPreferences.notificationMin;
   var notificationTime = nextTime.subtract(new Duration(minutes: notificationPref));
-
+  if (debug == true) {
+    notificationTime = DateTime.now().add(Duration(minutes: 1));
+  }
 
   // create and schedule a message
   var message = getMessage(nextHourWeather['weather'][0]['id']);
-  scheduleNotification(message, notificationTime, appPreferences);
+  var formattedNextTime = DateFormat.Hm().format(nextTime);
+  // var dateString = format.format(DateTime.now());
+
+  var notificationMessage = "Next time slot is at: $formattedNextTime. $message";
+  scheduleNotification(notificationMessage, notificationTime, appPreferences);
 }
 
 bool hadRun(AppPreferences appPreferences, DateTime nextTime) {

@@ -2,6 +2,7 @@ import '../services/location.dart';
 import '../services/networking.dart';
 
 
+
 class WeatherModel {
   static String getWeatherIcon(int condition) {
     if (condition < 300) {
@@ -64,6 +65,16 @@ class Weather {
   }
 
   // get next "good" hour
+  dynamic getNextHourGoodWeather() {
+    var now = DateTime.now();
+    var nextHourInSeconds = now.millisecondsSinceEpoch/ 1000;
+
+    for (var i = 0; i < _weatherData['hourly'].length; i++) {
+      if (nextHourInSeconds < _weatherData['hourly'][i]['dt'] && isGoodWeather(_weatherData['hourly'][i])) {
+        return _weatherData['hourly'][i];
+      }
+    }
+  }
 
   static Future<Weather> getWeather() async {
     Location location = Location();

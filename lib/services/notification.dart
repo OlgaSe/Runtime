@@ -48,7 +48,7 @@ class LocalNotificationsState extends State<LocalNotifications> {
 
     NotificationDetails notificationDetails =
       NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(0, 'Time to run', 'The optimal time to run at 1:00', notificationDetails);
+    await flutterLocalNotificationsPlugin.show(0, 'Ready for a run? 🏃', 'The optimal time to run at 1:00', notificationDetails);
   }
 
 

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:runtime/services/hourly_work.dart';
 import 'package:runtime/services/notification_utils.dart';
 import '../services/location.dart';
 import '../services/networking.dart';
 import '../services/weather.dart';
 import '../screens/settings.dart';
-import '../services/notification.dart';
+import '../services/hourly_work.dart';
+import 'package:intl/intl.dart';
+
 
 
 
@@ -43,7 +46,9 @@ class _HomePageState extends State<HomePage> {
     double latitude;
     double longitude;
     dynamic weatherData;
+    Weather weather;
     NotificationUtils notificationUtils = NotificationUtils();
+
 
     @override
     void initState() {
@@ -52,6 +57,8 @@ class _HomePageState extends State<HomePage> {
       updateLocationData();
       notificationUtils.initialize();
     }
+
+
 
   void updateLocationData() async {
     // Location location = Location();
@@ -78,12 +85,14 @@ class _HomePageState extends State<HomePage> {
     // // print(main);
     // // print(icon);
 
-    var weather = await Weather.getWeather();
+    var loadedWeather = await Weather.getWeather();
     setState(() {
+      weather = loadedWeather;
       weatherData = weather.getRawWeatherData();
       //weatherData = weatherDataResponse;
     });
   }
+
 
   Widget getWeatherTable(BuildContext context) {
     var rows = [
@@ -92,7 +101,7 @@ class _HomePageState extends State<HomePage> {
           textAlign: TextAlign.center,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        Text('Weather icon',
+        Text('Weather',
             textAlign: TextAlign.center,
             style: TextStyle(fontWeight: FontWeight.bold)
         ),
@@ -134,6 +143,7 @@ class _HomePageState extends State<HomePage> {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -166,12 +176,19 @@ class _HomePageState extends State<HomePage> {
         // in the middle of the parent.
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset('images/background.png',),
-            // LocalNotifications(),
+            Padding(
+              padding: EdgeInsets.only(top: 15.0),
+              child: Text(nextTimeSlot()),
+            ),
+            Image.asset(
+            'images/background.png',
+            width: 400.0,
+            height: 350.0,),
             FlatButton(
                 color: Colors.blue,
-                onPressed: () => notificationUtils.showNotifications("Test notification"),
+                onPressed: () => hourlyWork(debug: true),
                 child: Text(
                   "Show notification",
                   style: TextStyle(fontSize: 20.0, color: Colors.white),
@@ -188,4 +205,28 @@ class _HomePageState extends State<HomePage> {
         }));
       }
     }
+
+    String nextTimeSlot() {
+      var text = '';
+
+      if (weather == null) {
+        return "";
+      }
+
+      var nextGoodWeather = weather.getNextHourGoodWeather();
+      if (nextGoodWeather != null) {
+        var nextGoodWeatherHour = DateTime.fromMillisecondsSinceEpoch(nextGoodWeather['dt'] * 1000);
+        var nextHourString = DateFormat.Hm().format(nextGoodWeatherHour);
+        text = 'Next time for run is at: $nextHourString';
+        return text;
+      } else {
+        return "There is no good time for running today";
+      }
+    }
+
+
+
+
 }
+
+
