@@ -1,93 +1,49 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:ui';
+
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:runtime/screens/homepage.dart';
 
 
-class LocalNotifications extends StatefulWidget {
-  @override
-  LocalNotificationsState createState() => LocalNotificationsState();
-}
-
-class LocalNotificationsState extends State<LocalNotifications> {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  AndroidInitializationSettings androidInitializationSettings;
-  IOSInitializationSettings iosInitializationSettings;
-  InitializationSettings initializationSettings;
-
-  @override
-  void initState() {
-    super.initState();
+class NotificationUtils {
+  void initialize() {
     initializing();
   }
 
   void initializing() async {
-    androidInitializationSettings = AndroidInitializationSettings('app_icon');
-    iosInitializationSettings = IOSInitializationSettings(
-        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-    initializationSettings = InitializationSettings(
-        android: androidInitializationSettings, iOS: iosInitializationSettings);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
-  }
-
-  void showNotifications() async {
-    await notification();
-  }
-
-
-  Future<void> notification() async{
-    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
-        'Channel_ID',
-        'Channel title',
-        'Channel body',
-        priority: Priority.high,
-        importance: Importance.max,
-        ticker: 'Test'
+    AwesomeNotifications().initialize(
+      // set the icon to null if you want to use the default app icon
+        'resource://drawable/app_icon',
+        [
+          NotificationChannel(
+              channelKey: 'basic_channel',
+              channelName: 'Basic notifications',
+              channelDescription: 'Notification channel for basic tests',
+              defaultColor: Color(0xFF9D50DD),
+              ledColor: Colors.white,
+              importance: NotificationImportance.Max,
+          )
+        ]
     );
-    IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
 
-    NotificationDetails notificationDetails =
-      NotificationDetails(android: androidNotificationDetails, iOS: iosNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(0, 'Ready for a run? 🏃', 'The optimal time to run at 1:00', notificationDetails);
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        // Insert here your friendly dialog box before call the request method
+        // This is very important to not harm the user experience
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
   }
 
-
-  Future onSelectNotification(String payLoad) {
-    if(payLoad != null){
-      print(payLoad);
-    }
-
-    // set navigator to the the home page
-    // Navigator.push(context, MaterialPageRoute(builder: (context) {
-    //   return HomePage();
-    // }));
-  }
-
-
-  Future onDidReceiveLocalNotification(int id, String title, String body, String payLoad) async {
-    return CupertinoAlertDialog(
-      title: Text(title),
-      content: Text(body),
-      actions: <Widget> [
-        CupertinoDialogAction(
-          isDefaultAction: true,
-            onPressed: () {
-            print("");
-            },
-            child: Text("Okay")),
-        ],);
-
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
+  void showNotifications(String message) {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: 10,
+            channelKey: 'basic_channel',
+            title: 'Ready for a run?? 🏃',
+            body: message
+        ),
+      actionButtons: [ NotificationActionButton(
+          key: 'READ', label: 'Accept', autoCancel: true)]
+    );
   }
 }
-
-
-//
-// @override
-// Widget build(BuildContext context) {
-//   return Container();
-// }

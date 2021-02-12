@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:runtime/services/hourly_work.dart';
-import 'package:runtime/services/notification_utils.dart';
-import '../services/location.dart';
-import '../services/networking.dart';
 import '../services/weather.dart';
 import '../screens/settings.dart';
 import '../services/hourly_work.dart';
@@ -10,9 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:runtime/services/preference.dart';
 
 
-
-
-const apiKey = '4cc0b548d4ce485830092023fcfeea03';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -48,7 +42,6 @@ class _HomePageState extends State<HomePage> {
     double longitude;
     dynamic weatherData;
     Weather weather;
-    NotificationUtils notificationUtils = NotificationUtils();
     Preference preferences;
 
 
@@ -58,7 +51,6 @@ class _HomePageState extends State<HomePage> {
 
       loadPreference();
       updateLocationData();
-      notificationUtils.initialize();
     }
 
 

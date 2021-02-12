@@ -8,6 +8,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.5.0-nullsafety.1"
+  awesome_notifications:
+    dependency: "direct main"
+    description:
+      name: awesome_notifications
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.5+5"
   boolean_selector:
     dependency: transitive
     description:
@@ -76,20 +83,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_local_notifications:
-    dependency: "direct main"
-    description:
-      name: flutter_local_notifications
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.0.0"
-  flutter_local_notifications_platform_interface:
-    dependency: transitive
-    description:
-      name: flutter_local_notifications_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0+1"
   flutter_spinkit:
     dependency: "direct main"
     description:
@@ -107,13 +100,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  geocoder:
-    dependency: "direct main"
-    description:
-      name: geocoder
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.1"
   geolocator:
     dependency: "direct main"
     description:
@@ -219,13 +205,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.13"
-  rxdart:
-    dependency: "direct main"
-    description:
-      name: rxdart
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.23.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -315,13 +294,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.19-nullsafety.2"
-  timezone:
-    dependency: transitive
-    description:
-      name: timezone
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.6.1"
   typed_data:
     dependency: transitive
     description:

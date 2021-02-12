@@ -13,7 +13,7 @@ hourlyWork({debug=false}) async {
 
   print("Starting checks for $nextTime");
 
-  if (!isInTimeRange(userPreferences, nextTime)) {
+  if (!isInTimeRange(userPreferences, nextTime) && !debug) {
     print("Not in the user time range");
     return;
   }
@@ -48,7 +48,7 @@ hourlyWork({debug=false}) async {
   var notificationPref = userPreferences.notificationMin;
   var notificationTime = nextTime.subtract(new Duration(minutes: notificationPref));
   if (debug == true) {
-    notificationTime = DateTime.now().add(Duration(minutes: 1));
+    notificationTime = DateTime.now().add(Duration(seconds: 30));
   }
 
   // create and schedule a message
