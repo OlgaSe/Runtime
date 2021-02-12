@@ -7,6 +7,7 @@ import '../services/weather.dart';
 import '../screens/settings.dart';
 import '../services/hourly_work.dart';
 import 'package:intl/intl.dart';
+import 'package:runtime/services/preference.dart';
 
 
 
@@ -48,44 +49,22 @@ class _HomePageState extends State<HomePage> {
     dynamic weatherData;
     Weather weather;
     NotificationUtils notificationUtils = NotificationUtils();
+    Preference preferences;
 
 
     @override
     void initState() {
       super.initState();
 
+      loadPreference();
       updateLocationData();
       notificationUtils.initialize();
     }
 
 
-
   void updateLocationData() async {
-    // Location location = Location();
-    // await location.getCurrentLocation();
-    // latitude = location.latitude;
-    // longitude = location.longitude;
-    // print(latitude);
-    // print(longitude);
-    //
-    // NetworkHelper networkHelper = NetworkHelper(
-    //     'https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey&units=imperial');
-    // //save our response from api to weatherData var which we will use in the location screen.dart in the text widget
-    // //https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&appid=$apiKey&units=imperial
-    //
-    // var weatherDataResponse = await networkHelper.getData();
-    //
-    // var time = weatherDataResponse['hourly'][0]['dt'];
-    // // var temperature = weatherData['hourly']['temp'];
-    // // var main = weatherData['hourly']['weather']['main'];
-    // // var icon = weatherData['hourly']['weather']['icon'];
-    //
-    // print(time);
-    // // print(temperature);
-    // // print(main);
-    // // print(icon);
-
     var loadedWeather = await Weather.getWeather();
+
     setState(() {
       weather = loadedWeather;
       weatherData = weather.getRawWeatherData();
@@ -93,6 +72,13 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void loadPreference() async {
+    var userPreferences = await Preference.loadPreference();
+
+    setState(() {
+      preferences = userPreferences;
+    });
+  }
 
   Widget getWeatherTable(BuildContext context) {
     var rows = [
@@ -179,13 +165,21 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(top: 15.0),
+              padding: EdgeInsets.only(top: 3.0, bottom: 3.0),
               child: Text(nextTimeSlot()),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 3.0, bottom: 3.0),
+              child: Text(dailyForecast()),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 3.0, bottom: 3.0),
+              child: Text('Current temperature: ' +  weatherData['hourly'][0]['temp'].toString() + ' F°'),
             ),
             Image.asset(
             'images/background.png',
-            width: 400.0,
-            height: 350.0,),
+            width: 350.0,
+            height: 330.0,),
             FlatButton(
                 color: Colors.blue,
                 onPressed: () => hourlyWork(debug: true),
@@ -209,23 +203,64 @@ class _HomePageState extends State<HomePage> {
     String nextTimeSlot() {
       var text = '';
 
-      if (weather == null) {
+      if (weather == null || preferences==null) {
+        return "";
+      }
+
+      var now = DateTime.now();
+      var rangeEndSec = DateTime(now.year, now.month, now.day,
+          preferences.rangeEndMin ~/ 60).millisecondsSinceEpoch / 1000;
+
+      if (now.millisecondsSinceEpoch/1000>rangeEndSec) {
+        // the day is over
         return "";
       }
 
       var nextGoodWeather = weather.getNextHourGoodWeather();
-      if (nextGoodWeather != null) {
+      if (nextGoodWeather != null && nextGoodWeather['dt'] < rangeEndSec) {
         var nextGoodWeatherHour = DateTime.fromMillisecondsSinceEpoch(nextGoodWeather['dt'] * 1000);
         var nextHourString = DateFormat.Hm().format(nextGoodWeatherHour);
         text = 'Next time for run is at: $nextHourString';
-        return text;
-      } else {
-        return "There is no good time for running today";
       }
+
+      return text;
     }
 
 
+    String dailyForecast() {
+      if (preferences == null || weatherData == null) {
+        return '';
+      }
 
+      var now = DateTime.now();
+      var rangeStartSec = DateTime(now.year, now.month, now.day,
+          preferences.rangeStartMin ~/ 60).millisecondsSinceEpoch / 1000 ;
+      var rangeEndSec = DateTime(now.year, now.month, now.day,
+          preferences.rangeEndMin ~/ 60).millisecondsSinceEpoch / 1000;
+
+      int counter = 0;
+      for (var i = 0; i < weatherData['hourly'].length; i++) {
+        var hourlyData = weatherData['hourly'][i];
+        if (rangeStartSec<=hourlyData['dt'] && hourlyData['dt']<=rangeEndSec
+            && Weather.isGoodWeather(hourlyData)) {
+            counter++;
+        }
+      }
+
+      if (now.millisecondsSinceEpoch/1000 > rangeEndSec) {
+        return "The day is over. Let's run tomorrow";
+      } else if (counter == 0) {
+        return 'Unfortunately, today there is no optimal time to run';
+      } else if (counter < 2) {
+        return 'Today there is the only one chance to go for a run!';
+      } else if (counter < 3) {
+        return 'Today it\'s just a few time slots good for a run';
+      } else if (counter < 6){
+        return 'Today there are some slots with good weather';
+      } else {
+        return 'Today is a perfect day to be outside. Enjoy it!';
+      }
+    }
 
 }
 
