@@ -5,11 +5,7 @@ import 'package:flutter/material.dart';
 
 
 class NotificationUtils {
-  void initialize() {
-    initializing();
-  }
-
-  void initializing() async {
+  static void initialize() {
     AwesomeNotifications().initialize(
       // set the icon to null if you want to use the default app icon
         'resource://drawable/app_icon',
@@ -34,7 +30,7 @@ class NotificationUtils {
     });
   }
 
-  void showNotifications(String message) {
+  static void showNotifications(String message) {
     AwesomeNotifications().createNotification(
         content: NotificationContent(
             id: 10,
@@ -42,8 +38,12 @@ class NotificationUtils {
             title: 'Ready for a run?? 🏃',
             body: message
         ),
-      actionButtons: [ NotificationActionButton(
-          key: 'READ', label: 'Accept', autoCancel: true)]
+      actionButtons: [
+        NotificationActionButton(
+            key: 'ACCEPT', label: 'Accept', autoCancel: true),
+        NotificationActionButton(
+            key: 'CANCEL', label: 'Busy today', autoCancel: true),
+      ]
     );
   }
 }

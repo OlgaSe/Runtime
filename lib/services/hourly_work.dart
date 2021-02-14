@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:runtime/services/preference.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:runtime/services/weather.dart';
@@ -25,6 +26,11 @@ hourlyWork({debug=false}) async {
 
   if (hadRun(appPreferences, nextTime)) {
     print("User already had a run today");
+    return;
+  }
+
+  if (canceledRun(appPreferences, nextTime)) {
+    print("User has canceled today's run");
     return;
   }
 
@@ -63,6 +69,11 @@ hourlyWork({debug=false}) async {
 bool hadRun(AppPreferences appPreferences, DateTime nextTime) {
   var lastRunTime = appPreferences.getLastRunTime();
   return lastRunTime?.day == nextTime.day;
+}
+
+bool canceledRun(AppPreferences appPreferences, DateTime nextTime) {
+  var cancelNotification = appPreferences.getCancelNotificationsTime();
+  return cancelNotification?.day == nextTime.day;
 }
 
 bool isInBlockRange(Preference userPreferences, DateTime nextTime) {

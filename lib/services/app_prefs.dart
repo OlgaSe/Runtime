@@ -35,4 +35,13 @@ class AppPreferences {
     var storedValue = _sharedPreferences.getInt(key);
     return storedValue!=null ? DateTime.fromMillisecondsSinceEpoch(storedValue) : null;
   }
+
+
+  DateTime getCancelNotificationsTime() {
+    return _loadDatetimeValue("cancelNotificationsTime");
+  }
+
+  setCancelNotificationsTime(DateTime cancelNotificationsTime) {
+    _storeDatetimeValue(cancelNotificationsTime, 'cancelNotificationsTime');
+  }
 }

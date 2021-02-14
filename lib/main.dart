@@ -1,8 +1,11 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:runtime/screens/homepage.dart';
+import 'package:runtime/services/app_prefs.dart';
 import 'package:runtime/services/hourly_work.dart';
 import 'package:runtime/services/notification.dart';
 import 'package:workmanager/workmanager.dart';
+import 'package:runtime/services/notification.dart';
 // import 'package:runtime/services/notification_utils.dart';
 
 
@@ -10,14 +13,28 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   var currentTime = DateTime.now();
   print("Starting app at $currentTime");
+  NotificationUtils.initialize();
   Workmanager.initialize(callbackDispatcher, isInDebugMode: true);
   Workmanager.registerPeriodicTask('periodic', 'periodicTask',
     frequency: Duration(minutes: 15),
     existingWorkPolicy: ExistingWorkPolicy.replace,
   );
 
+  AwesomeNotifications().actionStream.listen((receivedNotification) {
+    var pressedButtonKey = receivedNotification.buttonKeyPressed;
+    print("User pressed button: $pressedButtonKey");
+    if (pressedButtonKey == 'ACCEPT') {
+      onPressedAccept();
+    } else if (pressedButtonKey == 'CANCEL') {
+      onPressedCancel();
+    } else {
+      print('Unknown button $pressedButtonKey');
+    }
+  });
+
   runApp(MyApp());
 }
+
 
 void callbackDispatcher() {
   Workmanager.executeTask((task, inputData) async {
@@ -32,18 +49,28 @@ void callbackDispatcher() {
       }
     } else if (task == 'NotificationTask' ) {
       print("Got NotificationTask");
-      var notificationUtils = NotificationUtils();
       print("Calling initialize");
-      notificationUtils.initialize();
 
       print("Showing notification");
-      notificationUtils.showNotifications(inputData["message"]);
+      NotificationUtils.showNotifications(inputData["message"]);
     } else {
       print("Unknown task! $task");
     }
 
     return Future.value(true);
   });
+}
+
+void onPressedAccept() async {
+  var appPreferences = await AppPreferences.loadPreferences();
+  appPreferences.setLastRunTime(DateTime.now());
+  Workmanager.cancelByTag('scheduledNotification');
+}
+
+void onPressedCancel() async {
+  var appPreferences = await AppPreferences.loadPreferences();
+  appPreferences.setCancelNotificationsTime(DateTime.now());
+  Workmanager.cancelByTag('scheduledNotification');
 }
 
 class MyApp extends StatelessWidget {
