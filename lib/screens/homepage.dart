@@ -164,14 +164,21 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.only(top: 3.0, bottom: 3.0),
               child: Text(dailyForecast()),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 3.0, bottom: 3.0),
-              child: Text('Current temperature: ' +  weatherData['hourly'][0]['temp'].toString() + ' F°'),
+            Stack(
+              alignment: Alignment.bottomCenter,
+              children: <Widget>[
+                Image.asset(
+                  'images/background.png',
+                  width: 350.0,
+                  height: 330.0,),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 5.0),
+                  child: Text(currentTemp()),
+                ),
+              ],
             ),
-            Image.asset(
-            'images/background.png',
-            width: 350.0,
-            height: 330.0,),
+
+
             FlatButton(
                 color: Colors.blue,
                 onPressed: () => hourlyWork(debug: true),
@@ -254,6 +261,13 @@ class _HomePageState extends State<HomePage> {
       }
     }
 
+    String currentTemp() {
+      if (weatherData == null) {
+        return  '';
+      }
+      int temp = weatherData['hourly'][0]['temp'].round();
+      return  'Current temperature: ' +  temp.toString() + '°F';
+    }
 }
 
 
