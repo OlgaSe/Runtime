@@ -1,16 +1,22 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:runtime/screens/homepage.dart';
+import 'package:runtime/screens/registration_screen.dart';
 import 'package:runtime/services/app_prefs.dart';
 import 'package:runtime/services/hourly_work.dart';
 import 'package:runtime/services/notification.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:runtime/services/notification.dart';
+
+import 'screens/login_screen.dart';
+import 'screens/welcome_screen.dart';
 // import 'package:runtime/services/notification_utils.dart';
 
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   var currentTime = DateTime.now();
   print("Starting app at $currentTime");
   NotificationUtils.initialize();
@@ -83,7 +89,14 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(title: 'Runtime Home Page'),
+      // home: HomePage(title: 'Runtime Home Page'),
+      initialRoute: WelcomeScreen.id,
+      routes: {
+        WelcomeScreen.id: (context) => WelcomeScreen(),
+        LoginScreen.id: (context) => LoginScreen(),
+        RegistrationScreen.id: (context) => RegistrationScreen(),
+        HomePage.id: (context) => HomePage(title: 'Runtime'),
+      },
     );
   }
 }

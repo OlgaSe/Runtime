@@ -1,14 +1,19 @@
+
 import 'package:flutter/material.dart';
+import 'package:runtime/screens/welcome_screen.dart';
 import 'package:runtime/services/hourly_work.dart';
 import '../services/weather.dart';
 import '../screens/settings.dart';
 import '../services/hourly_work.dart';
 import 'package:intl/intl.dart';
 import 'package:runtime/services/preference.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class HomePage extends StatefulWidget {
+
+  static const id = 'homepage';
+
   HomePage({Key key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -27,23 +32,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // int _counter = 0;
 
-  // void _incrementCounter() {
-  //   setState(() {
-  //     // This call to setState tells the Flutter framework that something has
-  //     // changed in this State, which causes it to rerun the build method below
-  //     // so that the display can reflect the updated values. If we changed
-  //     // _counter without calling setState(), then the build method would not be
-  //     // called again, and so nothing would appear to happen.
-  //     _counter++;
-  //   });
     double latitude;
     double longitude;
     dynamic weatherData;
     Weather weather;
     Preference preferences;
 
+    final _auth = FirebaseAuth.instance;
+    User loggedInUser;
 
     @override
     void initState() {
@@ -51,8 +48,21 @@ class _HomePageState extends State<HomePage> {
 
       loadPreference();
       updateLocationData();
+      getCurrentUser();
     }
 
+
+    void getCurrentUser() {
+      try {
+        final user = _auth.currentUser;
+        if (user != null) {
+          loggedInUser = user;
+          print(loggedInUser.email);
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
 
   void updateLocationData() async {
     var loadedWeather = await Weather.getWeather();
@@ -192,10 +202,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
     void handleClick(String choice) {
-      if(choice == 'Settings') {
+      if (choice == 'Settings') {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return SettingsScreen();
         }));
+      } else if (choice == 'Logout') {
+        _auth.signOut();
+        Navigator.popAndPushNamed(context, WelcomeScreen.id);
       }
     }
 

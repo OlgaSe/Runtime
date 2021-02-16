@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "734033444996",
+    "project_id": "runtime-6b05c",
+    "storage_bucket": "runtime-6b05c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:734033444996:android:cd67c46ced387de61602d1",
+        "android_client_info": {
+          "package_name": "com.olgas.runtime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "734033444996-vfdg41lt48e4hqbjgfs5bjom16a6n5fd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnhH4R9R7i0TdF4_TDJrS9z4U16JOUkJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "734033444996-vfdg41lt48e4hqbjgfs5bjom16a6n5fd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
