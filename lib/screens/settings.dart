@@ -69,92 +69,117 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: Container(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            // mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Text('Duration of run'),
-                DropdownButton<int>(
-                    value: _preferences.durationMin,
-                    items: <int>[15, 30, 45, 60]
-                        .map((int value) {
-                      return new DropdownMenuItem<int>(
-                        value: value,
-                        child: new Text("$value min"),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _preferences.durationMin = value;
-                      });
-                    }),
+            Container(
+              padding: EdgeInsets.all(5.0),
+              margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
+              // color: Colors.lightBlueAccent[100],
+              child: Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Text('Duration of run'),
+                  SizedBox(width: 25.0),
+                  DropdownButton<int>(
+                      value: _preferences.durationMin,
+                      items: <int>[15, 30, 45, 60]
+                          .map((int value) {
+                        return new DropdownMenuItem<int>(
+                          value: value,
+                          child: new Text("$value min"),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _preferences.durationMin = value;
+                        });
+                      }),
+                ],
+              ),
+            ),
+                Container(
+                  padding: EdgeInsets.all(5.0),
+                  margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
+                  // color: Colors.lightBlueAccent[100],
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text('Time range'),
+                      SizedBox(width: 55.0),
+                      DropdownButton<int>(
+                          value: _preferences.rangeStartMin,
+                          items: getDropDownItems(),
+                          onChanged: (value) {
+                            setState(() {
+                              _preferences.rangeStartMin = value;
+                            });
+                          }),
+                      SizedBox(width: 55.0),
+                      DropdownButton<int>(
+                          value: _preferences.rangeEndMin,
+                          items: getDropDownItems(),
+                          onChanged: (value) {
+                            setState(() {
+                              _preferences.rangeEndMin = value;
+                            });
+                          }),
               ],
             ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Text('Time range'),
-                    DropdownButton<int>(
-                        value: _preferences.rangeStartMin,
-                        items: getDropDownItems(),
-                        onChanged: (value) {
-                          setState(() {
-                            _preferences.rangeStartMin = value;
-                          });
-                        }),
-                    DropdownButton<int>(
-                        value: _preferences.rangeEndMin,
-                        items: getDropDownItems(),
-                        onChanged: (value) {
-                          setState(() {
-                            _preferences.rangeEndMin = value;
-                          });
-                        }),
-              ],
-            ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Text('Block time'),
-                    DropdownButton<int>(
-                        value: _preferences.blockRangeStartMin,
-                        items: getDropDownItems(),
-                        onChanged: (value) {
-                          setState(() {
-                            _preferences.blockRangeStartMin = value;
-                          });
-                        }),
-                    DropdownButton<int>(
-                        value: _preferences.blockRangeEndMin,
-                        items: getDropDownItems(),
-                        onChanged: (value) {
-                          setState(() {
-                            _preferences.blockRangeEndMin = value;
-                          });
-                        }),
-                  ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    Text('Notification'),
-
-                    DropdownButton<int>(
-                        value: _preferences.notificationMin,
-                        items: <int>[15, 30, 45, 60]
-                            .map((int value) {
-                          return new DropdownMenuItem<int>(
-                            value: value,
-                            child: Text("$value min"),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _preferences.notificationMin = value;
-                          });
-                        }),
-                  ],
+                Container(
+                  padding: EdgeInsets.all(5.0),
+                  margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
+                  // color: Colors.lightBlueAccent[100],
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text('Block time'),
+                      SizedBox(width: 62.0),
+                      DropdownButton<int>(
+                          value: _preferences.blockRangeStartMin,
+                          items: getDropDownItems(),
+                          onChanged: (value) {
+                            setState(() {
+                              _preferences.blockRangeStartMin = value;
+                            });
+                          }),
+                      SizedBox(width: 55.0),
+                      DropdownButton<int>(
+                          value: _preferences.blockRangeEndMin,
+                          items: getDropDownItems(),
+                          onChanged: (value) {
+                            setState(() {
+                              _preferences.blockRangeEndMin = value;
+                            });
+                          }),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(5.0),
+                  margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
+                  // color: Colors.lightBlueAccent[100],
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Text('Notification'),
+                      SizedBox(width: 55.0),
+                      DropdownButton<int>(
+                          value: _preferences.notificationMin,
+                          items: <int>[15, 30, 45, 60]
+                              .map((int value) {
+                            return new DropdownMenuItem<int>(
+                              value: value,
+                              child: Text("$value min"),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _preferences.notificationMin = value;
+                            });
+                          }),
+                    ],
+                  ),
                 ),
                 Material(
                   color: Colors.lightBlueAccent,
