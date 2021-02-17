@@ -144,7 +144,13 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         // Here we take the value from the HomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(widget.title,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+        ),
         actions: <Widget>[
           PopupMenuButton<String>(
           onSelected: handleClick,
@@ -152,7 +158,11 @@ class _HomePageState extends State<HomePage> {
               return {'Settings', 'Logout'}.map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
-                  child: Text(choice),
+                  child: Text(choice,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),),
                 );
               }).toList();
             },
@@ -160,44 +170,58 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('images/background2.jpg'),
+            fit: BoxFit.fitHeight,
+            colorFilter: ColorFilter.mode(
+                Colors.white.withOpacity(0.8), BlendMode.dstATop),
+          ),
+        ),
+        constraints: BoxConstraints.expand(),
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(top: 3.0, bottom: 3.0),
-              child: Text(nextTimeSlot()),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 3.0, bottom: 3.0),
-              child: Text(dailyForecast()),
-            ),
-            Stack(
-              alignment: Alignment.bottomCenter,
-              children: <Widget>[
-                Image.asset(
-                  'images/background.png',
-                  width: 350.0,
-                  height: 330.0,),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 5.0),
-                  child: Text(currentTemp()),
-                ),
-              ],
-            ),
-
-
-            FlatButton(
-                color: Colors.blue,
-                onPressed: () => hourlyWork(debug: true),
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 5.0, bottom: 3.0),
                 child: Text(
-                  "Show notification",
-                  style: TextStyle(fontSize: 20.0, color: Colors.white),
-                )),
-            getWeatherTable(context),
+                    nextTimeSlot(),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 5.0, bottom: 3.0),
+                child: Text(dailyForecast()),
+              ),
+              Stack(
+                alignment: Alignment.bottomCenter,
+                children: <Widget>[
+                  Image.asset(
+                    'images/background.png',
+                    width: 380.0,
+                    height: 340.0,),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                    child: Text(currentTemp()),
+                  ),
+                ],
+              ),
+
+
+              // FlatButton(
+              //     color: Colors.blue,
+              //     onPressed: () => hourlyWork(debug: true),
+              //     child: Text(
+              //       "Show notification",
+              //       style: TextStyle(fontSize: 20.0, color: Colors.white),
+              //     )),
+
+              getWeatherTable(context),
       ]),
+        ),
     ),
     );
   }

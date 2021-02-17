@@ -60,7 +60,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text('Settings',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),),
       ),
       body: Container(
           child: Column(
@@ -72,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Text('Duration of run'),
                 DropdownButton<int>(
                     value: _preferences.durationMin,
-                    items: <int>[15, 30, 45, 60, 90]
+                    items: <int>[15, 30, 45, 60]
                         .map((int value) {
                       return new DropdownMenuItem<int>(
                         value: value,
@@ -134,6 +139,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Text('Notification'),
+
                     DropdownButton<int>(
                         value: _preferences.notificationMin,
                         items: <int>[15, 30, 45, 60]
@@ -150,9 +156,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         }),
                   ],
                 ),
-                ElevatedButton(
-                    onPressed: () {_preferences.savePreference(); Navigator.pop(context);},
-                    child: Text('Save')),
+                Material(
+                  color: Colors.lightBlueAccent,
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                  elevation: 5.0,
+                  child: MaterialButton(
+                      onPressed: () {_preferences.savePreference(); Navigator.pop(context);
+                      },
+                      child: Text('Save',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )),
+                ),
       ])),
     );
   }

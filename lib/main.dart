@@ -88,6 +88,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+
+        fontFamily: 'Quicksand',
+
+        textTheme: TextTheme(
+          // headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+          // headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+          bodyText2: TextStyle(fontSize: 16.0,  fontWeight: FontWeight.bold, fontFamily: 'Quicksand'),
+        ),
       ),
       // home: HomePage(title: 'Runtime Home Page'),
       initialRoute: WelcomeScreen.id,

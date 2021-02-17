@@ -55,12 +55,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
                   'Runtime',
                   style: TextStyle(
+                    fontFamily: 'QuickSand',
                     fontSize: 45.0,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueAccent,
                   ),
                 ),
                 Hero(
@@ -72,6 +75,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                 ),
               ],
             ),
+            Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 15.0),
+                child: Text(
+                  'Welcome to the application! It will notify about optimal time for a run based on personal preferences and weather forecast.',
+                    style: TextStyle(
+                      fontFamily: 'ArchivoNarrow',
+                      fontSize: 14.5,
+                      color: Colors.grey,
+                    ),
+                ),
+              ),
+            ),
+
             SizedBox(
               height: 48.0,
             ),
@@ -90,7 +107,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                   height: 42.0,
                   child: Text(
                     'Log In',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -110,7 +131,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                   height: 42.0,
                   child: Text(
                     'Register',
-                    style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                   ),
                 ),
               ),
